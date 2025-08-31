@@ -1,0 +1,70 @@
+variables:
+  GROUP_NAME: "Development"
+  PROJECT_NAME: "sar-pmo-portal-frontend"
+  CONTAINER_NAME: "sar-pmo-portal-frontend"
+  CI_REGISTRY: "gitlab.wulooj.com:5050"
+  IMAGE_NAME: "$CI_REGISTRY/development/sar-pmo-portal-frontend"
+  DOCKER_HOST: unix:///var/run/docker.sock
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DEPLOY_PORT: 2022
+  DEPLOY_USER: root
+  DEPLOY_SERVER: 135.181.38.91
+
+
+stages:
+  - build
+  - deploy
+
+build-docker-image:
+  stage: build
+  image: docker:27-cli
+  services:
+    - name: docker:27-dind
+      command: ["--tls=false"]
+
+  tags:
+    - docker
+  before_script:
+    - echo "Checking Docker daemon availability..."
+    - docker info --format '{{.ServerVersion}}' || (echo "Docker daemon not available" && docker ps -a && exit 1)
+  script:
+    - |
+      IMAGE_TAG_CLEAN="${GROUP_NAME}-${PROJECT_NAME}-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+      echo "Generated Image Tag: $IMAGE_TAG_CLEAN"
+      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+      echo "Building Docker image: $IMAGE_NAME:$IMAGE_TAG_CLEAN"
+      docker build -t "$IMAGE_NAME:$IMAGE_TAG_CLEAN" .
+      echo "Tagging image as branch-latest"
+      docker tag "$IMAGE_NAME:$IMAGE_TAG_CLEAN" "$IMAGE_NAME:${CI_COMMIT_REF_SLUG}-latest"
+      echo "Pushing commit-specific tag: $IMAGE_NAME:$IMAGE_TAG_CLEAN"
+      docker push "$IMAGE_NAME:$IMAGE_TAG_CLEAN"
+      echo "Pushing branch-latest tag: $IMAGE_NAME:${CI_COMMIT_REF_SLUG}-latest"
+      docker push "$IMAGE_NAME:${CI_COMMIT_REF_SLUG}-latest"
+
+
+deploy-to-staging:
+  stage: deploy
+  image: alpine:latest
+  tags:
+    - docker
+
+  before_script:
+    - apk add --no-cache openssh docker-cli
+  script:
+    - echo "$SSH_PRIVATE_KEY" > id_rsa
+    - chmod 600 id_rsa
+    - |
+      IMAGE_TAG_CLEAN="${GROUP_NAME}-${PROJECT_NAME}-${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+      IMAGE_LATEST_TAG="${IMAGE_NAME}:${CI_COMMIT_REF_SLUG}-latest"
+      echo "Deploying image: $IMAGE_LATEST_TAG"
+      ssh -i id_rsa -o StrictHostKeyChecking=no -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_SERVER" << EOF
+        docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+        docker pull "$IMAGE_LATEST_TAG"
+        docker stop $CONTAINER_NAME || true
+        docker rm $CONTAINER_NAME || true
+        docker run -d --restart always --name $CONTAINER_NAME -p 8080:3000 "$IMAGE_LATEST_TAG"
+      EOF
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "master"'
+      when: always
