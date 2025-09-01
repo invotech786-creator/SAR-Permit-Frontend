@@ -920,7 +920,9 @@ const Users = () => {
                     <MenuItem value=''>{t('All Roles')}</MenuItem>
                     {safeRoles.map((role: any) => (
                       <MenuItem key={role._id} value={role._id}>
-                        {safeString(role.nameEn || role.nameAr, t)}
+                        {locale === 'ar'
+                          ? safeString(role.nameAr || role.nameEn, t)
+                          : safeString(role.nameEn || role.nameAr, t)}
                       </MenuItem>
                     ))}
                   </Select>
@@ -980,7 +982,14 @@ const Users = () => {
             onSelectionModelChange={newSelection => setSelectedRows(newSelection)}
             selectionModel={selectedRows}
             rowsPerPageOptions={[10, 25, 50]}
-            localeText={{ noRowsLabel: t('No Records Found') }}
+            localeText={{
+              noRowsLabel: t('No Records Found'),
+              MuiTablePagination: {
+                labelRowsPerPage: t('Rows per page:'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
+              }
+            }}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
             onPageChange={newPage => {
               if (pagination) {

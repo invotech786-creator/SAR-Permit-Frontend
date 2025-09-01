@@ -45,12 +45,12 @@ import CloseIcon from '@mui/icons-material/Close'
 import EnhancedPermissionMatrix from 'src/components/EnhancedPermissionMatrix'
 
 // ** Utils
-import { 
-  strictArabicOnlyPattern, 
-  strictEnglishOnlyPattern, 
-  fieldRequiredMessage, 
-  strictArabicOnlyMessage, 
-  strictEnglishOnlyMessage 
+import {
+  strictArabicOnlyPattern,
+  strictEnglishOnlyPattern,
+  fieldRequiredMessage,
+  strictArabicOnlyMessage,
+  strictEnglishOnlyMessage
 } from 'src/utils'
 
 interface EditRoleModalProps {
@@ -95,8 +95,8 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
 
       // Check if all permissions are selected (full access)
       const allPermissionIds = getAllPermissionIds()
-      const allPermissionsSelected = allPermissionIds.length > 0 &&
-        allPermissionIds.every(id => permissionIds.includes(id))
+      const allPermissionsSelected =
+        allPermissionIds.length > 0 && allPermissionIds.every(id => permissionIds.includes(id))
       setFullAccess(allPermissionsSelected)
     } else {
       setRoleName('')
@@ -139,12 +139,12 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
 
   const handleSave = async () => {
     if (!role || !roleName.trim() || !roleDescriptionAr.trim()) return
-    
+
     // Validate English fields - no Arabic characters allowed
     if (!strictEnglishOnlyPattern.test(roleName.trim())) return
     if (roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())) return
-    
-    // Validate Arabic fields - no English characters allowed  
+
+    // Validate Arabic fields - no English characters allowed
     if (roleNameAr.trim() && !strictArabicOnlyPattern.test(roleNameAr.trim())) return
     if (!strictArabicOnlyPattern.test(roleDescriptionAr.trim())) return
 
@@ -217,9 +217,11 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
                 required
                 error={Boolean(roleName.trim() && !strictEnglishOnlyPattern.test(roleName.trim()))}
                 helperText={
-                  !roleName.trim() ? t('Field is required')
-                  : roleName.trim() && !strictEnglishOnlyPattern.test(roleName.trim()) ? strictEnglishOnlyMessage
-                  : ''
+                  !roleName.trim()
+                    ? t('Field is required')
+                    : roleName.trim() && !strictEnglishOnlyPattern.test(roleName.trim())
+                    ? strictEnglishOnlyMessage
+                    : ''
                 }
               />
             </Grid>
@@ -245,9 +247,14 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
                 onChange={e => setRoleDescription(e.target.value)}
                 multiline
                 rows={2}
+                inputProps={{ maxLength: 200 }}
                 error={Boolean(roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim()))}
                 helperText={
-                  roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim()) ? strictEnglishOnlyMessage : ''
+                  roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())
+                    ? strictEnglishOnlyMessage
+                    : roleDescription.length > 0
+                    ? `Limit: ${roleDescription.length}/200`
+                    : ''
                 }
               />
             </Grid>
@@ -261,11 +268,16 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
                 multiline
                 rows={2}
                 required
+                inputProps={{ maxLength: 200 }}
                 error={Boolean(!roleDescriptionAr.trim() || !strictArabicOnlyPattern.test(roleDescriptionAr.trim()))}
                 helperText={
-                  !roleDescriptionAr.trim() ? t('Field is required')
-                  : !strictArabicOnlyPattern.test(roleDescriptionAr.trim()) ? strictArabicOnlyMessage
-                  : ''
+                  !roleDescriptionAr.trim()
+                    ? t('Field is required')
+                    : !strictArabicOnlyPattern.test(roleDescriptionAr.trim())
+                    ? strictArabicOnlyMessage
+                    : roleDescriptionAr.length > 0
+                    ? `Limit: ${roleDescriptionAr.length}/200`
+                    : ''
                 }
               />
             </Grid>
@@ -274,11 +286,11 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
                 <InputLabel>{t('Role Status')}</InputLabel>
                 <Select
                   value={isActive ? 'active' : 'inactive'}
-                  onChange={(e) => setIsActive(e.target.value === 'active')}
+                  onChange={e => setIsActive(e.target.value === 'active')}
                   label={t('Role Status')}
                 >
-                  <MenuItem value="active">{t('Active')}</MenuItem>
-                  <MenuItem value="inactive">{t('Inactive')}</MenuItem>
+                  <MenuItem value='active'>{t('Active')}</MenuItem>
+                  <MenuItem value='inactive'>{t('Inactive')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -307,8 +319,8 @@ const EditRoleModal = ({ open, role, onClose, onSave }: EditRoleModalProps) => {
             variant='contained'
             onClick={handleSave}
             disabled={
-              isSubmitting || 
-              !roleName.trim() || 
+              isSubmitting ||
+              !roleName.trim() ||
               !roleDescriptionAr.trim() ||
               !strictEnglishOnlyPattern.test(roleName.trim()) ||
               (roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())) ||

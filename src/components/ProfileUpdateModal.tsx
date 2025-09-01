@@ -25,6 +25,7 @@ import { useAuthStore } from 'src/store'
 import { useRoleStore } from 'src/store'
 import { useJobTitleStore } from 'src/store'
 import { useCompanyStore } from 'src/store'
+import { usePermission } from 'src/utils/permissions'
 import { IUser } from 'src/types/user'
 import { IRole } from 'src/types/role'
 import { IJobTitle } from 'src/types/jobtitle'
@@ -63,6 +64,12 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
   const { roles, getRoles } = useRoleStore()
   const { jobTitles, getJobTitles } = useJobTitleStore()
   const { companies, getCompanies } = useCompanyStore()
+  const { canAccess } = usePermission()
+
+  // Check permissions for companies and job titles
+  const canViewCompanies = canAccess('company-management')
+  const canViewJobTitles = canAccess('job-title-management')
+
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<UpdateProfileData>({
     nameAr: '',
@@ -82,10 +89,14 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
     if (open) {
       // Fetch roles, job titles, and companies when modal opens
       getRoles()
-      getJobTitles()
-      getCompanies()
+      if (canViewJobTitles) {
+        getJobTitles()
+      }
+      if (canViewCompanies) {
+        getCompanies()
+      }
     }
-  }, [open, getRoles, getJobTitles, getCompanies])
+  }, [open, getRoles, getJobTitles, getCompanies, canViewJobTitles, canViewCompanies])
 
   // Re-render when locale changes to update dropdown displays
   useEffect(() => {
@@ -99,7 +110,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
         nameEn: user.nameEn || '',
         email: user.email || '',
         phone: user.phone || '',
-        roleId: typeof user.roleId === 'string' ? user.roleId : user.roleId?._id || '',
+        roleId: user.roleId || '',
         jobTitleId: typeof user.jobTitleId === 'string' ? user.jobTitleId : user.jobTitleId?._id || '',
         companyId: typeof user.companyId === 'string' ? user.companyId : user.companyId?._id || '',
         username: user.username || '',
@@ -125,15 +136,26 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
     }
   }
 
+  const handleRemoveImage = () => {
+    setSelectedFile(null)
+    setPreviewUrl('')
+  }
+
   const handleSubmit = async () => {
-    if (
-      !formData.nameAr ||
-      !formData.nameEn ||
-      !formData.email ||
-      !formData.username ||
-      !formData.jobTitleId ||
-      !formData.companyId
-    ) {
+    // Check required fields based on permissions
+    const requiredFields = [!formData.nameAr, !formData.nameEn, !formData.email, !formData.username]
+
+    // Only require job title if user has permission to view job titles
+    if (canViewJobTitles && !formData.jobTitleId) {
+      requiredFields.push(true)
+    }
+
+    // Only require company if user has permission to view companies
+    if (canViewCompanies && !formData.companyId) {
+      requiredFields.push(true)
+    }
+
+    if (requiredFields.some(field => field)) {
       showErrorMessage(t('Please fill in all required fields'))
       return
     }
@@ -153,16 +175,27 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
       formDataToSend.append('email', formData.email)
       formDataToSend.append('phone', formData.phone)
       // formDataToSend.append('roleId', formData.roleId)
-      formDataToSend.append('jobTitleId', formData.jobTitleId)
-      formDataToSend.append('companyId', formData.companyId)
+
+      // Only append job title and company if user has permission to view them
+      if (canViewJobTitles && formData.jobTitleId) {
+        formDataToSend.append('jobTitleId', formData.jobTitleId)
+      }
+      if (canViewCompanies && formData.companyId) {
+        formDataToSend.append('companyId', formData.companyId)
+      }
+
       formDataToSend.append('username', formData.username)
 
       if (formData.password) {
         formDataToSend.append('password', formData.password)
       }
 
+      // Handle profile picture: if selectedFile exists, send it; if no selectedFile but previewUrl is empty, send empty string to remove
       if (selectedFile) {
         formDataToSend.append('profilePic', selectedFile)
+      } else if (!previewUrl) {
+        // If no selectedFile and no previewUrl, user wants to remove the profile picture
+        formDataToSend.append('profilePic', '')
       }
 
       // Get token from localStorage
@@ -225,7 +258,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
           <Grid item xs={12} display='flex' justifyContent='center' mb={2}>
             <Box position='relative'>
               <Avatar src={previewUrl} sx={{ width: 100, height: 100, fontSize: '2rem' }}>
-                {user.nameEn?.charAt(0)?.toUpperCase() || 'U'}
+                {previewUrl ? user.nameEn?.charAt(0)?.toUpperCase() || 'U' : <Icon icon='tabler:user' />}
               </Avatar>
               <input
                 accept='image/*'
@@ -240,7 +273,7 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
                   sx={{
                     position: 'absolute',
                     bottom: 0,
-                    right: 0,
+                    [isRTL ? 'left' : 'right']: 0,
                     backgroundColor: 'primary.main',
                     color: 'white',
                     '&:hover': {
@@ -252,6 +285,26 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
                   <Icon icon='tabler:camera' />
                 </IconButton>
               </label>
+              {/* Remove Image Button - only show when there's an existing image */}
+              {previewUrl && (
+                <IconButton
+                  onClick={handleRemoveImage}
+                  title={t('Remove profile picture')}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    [isRTL ? 'left' : 'right']: 0,
+                    backgroundColor: 'error.main',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: 'error.dark'
+                    }
+                  }}
+                  size='small'
+                >
+                  <Icon icon='tabler:trash' />
+                </IconButton>
+              )}
             </Box>
           </Grid>
 
@@ -352,41 +405,62 @@ const ProfileUpdateModal: React.FC<ProfileUpdateModalProps> = ({ open, onClose, 
             </FormControl>
           </Grid> */}
 
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
-              <InputLabel>{t('Job Title')}</InputLabel>
-              <Select
-                value={formData.jobTitleId}
-                onChange={e => handleInputChange('jobTitleId', e.target.value)}
-                label={t('Job Title')}
-                required
-              >
-                {jobTitles.map(jobTitle => (
-                  <MenuItem key={jobTitle._id} value={jobTitle._id}>
-                    {locale === 'ar' ? jobTitle.nameAr : jobTitle.nameEn}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+          {/* Permission notice for hidden fields */}
+          {(!canViewJobTitles || !canViewCompanies) && (
+            <Grid item xs={12}>
+              <Typography variant='body2' color='text.secondary' sx={{ fontStyle: 'italic' }}>
+                {!canViewJobTitles &&
+                  !canViewCompanies &&
+                  t('Note: Job Title and Company fields are hidden due to insufficient permissions.')}
+                {!canViewJobTitles &&
+                  canViewCompanies &&
+                  t('Note: Job Title field is hidden due to insufficient permissions.')}
+                {canViewJobTitles &&
+                  !canViewCompanies &&
+                  t('Note: Company field is hidden due to insufficient permissions.')}
+              </Typography>
+            </Grid>
+          )}
 
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth required>
-              <InputLabel>{t('Company')}</InputLabel>
-              <Select
-                value={formData.companyId}
-                onChange={e => handleInputChange('companyId', e.target.value)}
-                label={t('Company')}
-                required
-              >
-                {companies.map(company => (
-                  <MenuItem key={company._id} value={company._id}>
-                    {locale === 'ar' ? company.nameAr : company.nameEn}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+          {canViewJobTitles && (
+            <Grid item xs={12} md={canViewCompanies ? 4 : 6}>
+              <FormControl fullWidth required>
+                <InputLabel>{t('Job Title')}</InputLabel>
+                <Select
+                  value={formData.jobTitleId}
+                  onChange={e => handleInputChange('jobTitleId', e.target.value)}
+                  label={t('Job Title')}
+                  required
+                >
+                  {jobTitles.map(jobTitle => (
+                    <MenuItem key={jobTitle._id} value={jobTitle._id}>
+                      {locale === 'ar' ? jobTitle.nameAr : jobTitle.nameEn}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
+
+          {canViewCompanies && (
+            <Grid item xs={12} md={canViewJobTitles ? 4 : 6}>
+              <FormControl fullWidth required>
+                <InputLabel>{t('Company')}</InputLabel>
+                <Select
+                  value={formData.companyId}
+                  onChange={e => handleInputChange('companyId', e.target.value)}
+                  label={t('Company')}
+                  required
+                >
+                  {companies.map(company => (
+                    <MenuItem key={company._id} value={company._id}>
+                      {locale === 'ar' ? company.nameAr : company.nameEn}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
 

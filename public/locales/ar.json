@@ -1237,5 +1237,14 @@
   "Color": "اللون",
   "Plate Number": "رقم اللوحة",
   "Vehicle": "المركبة",
-  "Permit Number": "رقم التصريح"
+  "Permit Number": "رقم التصريح",
+  "Permit Details": "تفاصيل التصريح",
+  "Failed to decline person": "فشل في رفض الشخص",
+  "Person declined successfully": "تم رفض الشخص بنجاح",
+  "Failed to update permit status": "فشل في تحديث حالة التصريح",
+  "Permit status updated successfully": "تم تحديث حالة التصريح بنجاح",
+  "Please fill in all required fields": "يرجى ملء جميع الحقول المطلوبة",
+  "End date must be after start date": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
+  "Failed to update permit": "فشل في تحديث التصريح",
+  "Permit updated successfully": "تم تحديث التصريح بنجاح"
 }

@@ -163,6 +163,12 @@ const DataTable: FC<Props> = ({
         page={page}
         onPageChange={onHandlePageChange}
         onRowsPerPageChange={onHandleRowsPerPageChange}
+        labelDisplayedRows={({ from, to, count }) =>
+          i18n.language === 'ar'
+            ? `${from}-${to} من ${count !== -1 ? count : `أكثر من ${to}`}`
+            : `${from}-${to} of ${count !== -1 ? count : `more than ${to}`}`
+        }
+        labelRowsPerPage={i18n.language === 'ar' ? 'صفوف في الصفحة:' : 'Rows per page:'}
       />
 
       {showDeleteModal && (

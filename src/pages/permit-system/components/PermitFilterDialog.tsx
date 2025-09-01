@@ -12,8 +12,10 @@ import {
   Select,
   MenuItem,
   Box,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material'
+import Icon from 'src/@core/components/icon'
 import { useTranslation } from 'react-i18next'
 import { IDepartment, IUser } from 'src/types'
 
@@ -132,10 +134,21 @@ const PermitFilterDialog: React.FC<PermitFilterDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth='md' fullWidth>
-      <DialogTitle>
-        <Typography variant='h6' component='div'>
+      <DialogTitle sx={{ pb: 1, position: 'relative' }}>
+        <Typography variant='h6' component='span' sx={{ textAlign: 'center', display: 'block' }}>
           {t('Filter Permits')}
         </Typography>
+        <IconButton
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: 'grey.500'
+          }}
+        >
+          <Icon icon='tabler:x' />
+        </IconButton>
       </DialogTitle>
 
       <DialogContent>

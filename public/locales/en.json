@@ -1152,5 +1152,14 @@
   "Manage personal information": "Manage personal information",
   "Logout": "Logout",
   "Refresh Permissions": "Refresh Permissions",
-  "Please select a valid image file (PNG or JPG only)": "Please select a valid image file (PNG or JPG only)"
+  "Please select a valid image file (PNG or JPG only)": "Please select a valid image file (PNG or JPG only)",
+  "Permit Details": "Permit Details",
+  "Failed to decline person": "Failed to decline person",
+  "Person declined successfully": "Person declined successfully",
+  "Failed to update permit status": "Failed to update permit status",
+  "Permit status updated successfully": "Permit status updated successfully",
+  "Please fill in all required fields": "Please fill in all required fields",
+  "End date must be after start date": "End date must be after start date",
+  "Failed to update permit": "Failed to update permit",
+  "Permit updated successfully": "Permit updated successfully"
 }

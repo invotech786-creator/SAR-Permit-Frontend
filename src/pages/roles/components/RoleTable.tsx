@@ -308,9 +308,9 @@ const RoleTable = ({
           size='small'
           label={row.isActive ? t('Active') : t('Inactive')}
           color={roleStatusObj[row.isActive ? 'active' : 'inactive']}
-          sx={{ 
+          sx={{
             textTransform: 'capitalize',
-            fontWeight: 500 
+            fontWeight: 500
           }}
         />
       )
@@ -409,6 +409,14 @@ const RoleTable = ({
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={setColumnVisibilityModel}
             sx={{ '& .MuiDataGrid-columnHeaders': { borderRadius: 0 } }}
+            localeText={{
+              noRowsLabel: t('No Records Found'),
+              MuiTablePagination: {
+                labelRowsPerPage: t('Rows per page:'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
+              }
+            }}
           />
         </Card>
       </Grid>

@@ -484,7 +484,14 @@ const Companies = () => {
             onSelectionModelChange={rows => setSelectedRows(rows)}
             selectionModel={selectedRows}
             rowsPerPageOptions={[10, 25, 50]}
-            localeText={{ noRowsLabel: t('No Records Found') }}
+            localeText={{
+              noRowsLabel: t('No Records Found'),
+              MuiTablePagination: {
+                labelRowsPerPage: t('Rows per page:'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
+              }
+            }}
             onPageSizeChange={newPageSize => {
               setPageSize(newPageSize)
               // Reset to first page when changing page size

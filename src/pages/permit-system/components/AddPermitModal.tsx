@@ -242,6 +242,7 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
         !formData.purposeEn ||
         !formData.type ||
         !formData.workPermitType ||
+        !formData.startingDepartmentId ||
         !formData.startDate ||
         !formData.endDate
       ) {
@@ -414,12 +415,21 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
                         value={formData.companyId}
                         onChange={e => handleFormChange('companyId', e.target.value)}
                         label={currentLang === 'ar' ? 'الشركة' : 'Company'}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 200
+                            }
+                          }
+                        }}
                       >
-                        {companies.map(company => (
-                          <MenuItem key={company._id} value={company._id}>
-                            {getLocalizedText(company.nameEn, company.nameAr)}
-                          </MenuItem>
-                        ))}
+                        {companies
+                          .filter(company => company.isActive)
+                          .map(company => (
+                            <MenuItem key={company._id} value={company._id}>
+                              {getLocalizedText(company.nameEn, company.nameAr)}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -460,7 +470,17 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
                       fullWidth
                       label={currentLang === 'ar' ? 'الهدف (عربي)' : 'Purpose (Arabic)'}
                       value={formData.purposeAr}
-                      onChange={e => handleFormChange('purposeAr', e.target.value)}
+                      onChange={e => {
+                        const value = e.target.value
+                        // Only allow Arabic text, numbers, and common punctuation
+                        const arabicRegex =
+                          /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\d\.,!?;:'"()\-]*$/
+                        if (arabicRegex.test(value) || value === '') {
+                          handleFormChange('purposeAr', value)
+                        }
+                      }}
+                      multiline
+                      rows={2}
                       required
                       error={!formData.purposeAr}
                     />
@@ -471,19 +491,36 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
                       fullWidth
                       label={currentLang === 'ar' ? 'الهدف (إنجليزي)' : 'Purpose (English)'}
                       value={formData.purposeEn}
-                      onChange={e => handleFormChange('purposeEn', e.target.value)}
+                      onChange={e => {
+                        const value = e.target.value
+                        // Only allow English text, numbers, and common punctuation
+                        const englishRegex = /^[a-zA-Z\s\d\.,!?;:'"()\-]*$/
+                        if (englishRegex.test(value) || value === '') {
+                          handleFormChange('purposeEn', value)
+                        }
+                      }}
                       required
                       error={!formData.purposeEn}
+                      helperText={
+                        currentLang === 'ar' ? 'يجب أن يكون النص باللغة الإنجليزية فقط' : 'Text must be in English only'
+                      }
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth required error={!formData.startingDepartmentId}>
                       <InputLabel>{currentLang === 'ar' ? 'قسم البداية' : 'Starting Department'}</InputLabel>
                       <Select
                         value={formData.startingDepartmentId}
                         onChange={e => handleFormChange('startingDepartmentId', e.target.value)}
                         label={currentLang === 'ar' ? 'قسم البداية' : 'Starting Department'}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 200
+                            }
+                          }
+                        }}
                       >
                         {departments.map(dept => (
                           <MenuItem key={dept._id} value={dept._id}>
@@ -501,12 +538,21 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
                         value={formData.responsibleId}
                         onChange={e => handleFormChange('responsibleId', e.target.value)}
                         label={currentLang === 'ar' ? 'المسؤول / تعيين إلى' : 'Responsible Person'}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 200
+                            }
+                          }
+                        }}
                       >
-                        {users.map(user => (
-                          <MenuItem key={user._id} value={user._id}>
-                            {getLocalizedText(user.nameEn, user.nameAr)}
-                          </MenuItem>
-                        ))}
+                        {users
+                          .filter(user => user.isActive)
+                          .map(user => (
+                            <MenuItem key={user._id} value={user._id}>
+                              {getLocalizedText(user.nameEn, user.nameAr)}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -642,7 +688,6 @@ const AddPermitModal: React.FC<AddPermitModalProps> = ({ open, onClose, onSucces
                           label={currentLang === 'ar' ? 'الاسم (إنجليزي)' : 'Name (English)'}
                           value={person.nameEn}
                           onChange={e => handlePeopleChange(index, 'nameEn', e.target.value)}
-                          helperText={currentLang === 'ar' ? 'اختياري' : 'Optional'}
                         />
                       </Grid>
                       <Grid item xs={12} md={2}>

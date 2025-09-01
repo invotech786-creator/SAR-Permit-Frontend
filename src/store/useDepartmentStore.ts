@@ -114,7 +114,17 @@ const useDepartmentStore = create<DepartmentState>((set, get) => ({
   deleteDepartment: async id => {
     const response: any = await Network.delete(`${Urls.department}/${id}`)
     if (!response.ok) {
-      showErrorMessage(response.data.message)
+      // Handle specific error message for department with permits
+      let errorMessage = response.data.message
+      if (errorMessage === 'Cannot delete department with permits in the current level') {
+        // Get current language from localStorage or default to 'en'
+        const currentLang = localStorage.getItem('i18nextLng') || 'en'
+        errorMessage =
+          currentLang === 'ar'
+            ? 'لا يمكن حذف القسم الذي يحتوي على تصاريح في المستوى الحالي'
+            : 'Cannot delete department with permits in the current level'
+      }
+      showErrorMessage(errorMessage)
 
       return false
     }
@@ -128,7 +138,17 @@ const useDepartmentStore = create<DepartmentState>((set, get) => ({
   deleteBulkDepartments: async (departmentIds: string[]) => {
     const response: any = await Network.delete(`${Urls.department}/bulk/delete`, { ids: departmentIds })
     if (!response.ok) {
-      showErrorMessage(response.data.message)
+      // Handle specific error message for department with permits
+      let errorMessage = response.data.message
+      if (errorMessage === 'Cannot delete department with permits in the current level') {
+        // Get current language from localStorage or default to 'en'
+        const currentLang = localStorage.getItem('i18nextLng') || 'en'
+        errorMessage =
+          currentLang === 'ar'
+            ? 'لا يمكن حذف القسم الذي يحتوي على تصاريح في المستوى الحالي'
+            : 'Cannot delete department with permits in the current level'
+      }
+      showErrorMessage(errorMessage)
 
       return false
     }

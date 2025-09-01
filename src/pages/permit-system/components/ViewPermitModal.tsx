@@ -103,7 +103,20 @@ const ViewPermitModal: React.FC<ViewPermitModalProps> = ({ open, onClose, permit
                     {t('Permit Number')}: {permit.number}
                   </Typography>
                   <Typography variant='body1' color='text.secondary'>
-                    {t('Type')}: {t(permit.type?.charAt(0).toUpperCase() + permit.type?.slice(1))}
+                    {t('Type')}:{' '}
+                    {permit.type === 'entry'
+                      ? currentLang === 'ar'
+                        ? 'دخول'
+                        : 'Entry'
+                      : permit.type === 'exit'
+                      ? currentLang === 'ar'
+                        ? 'خروج'
+                        : 'Exit'
+                      : permit.type === 'entry and exit'
+                      ? currentLang === 'ar'
+                        ? 'دخول وخروج'
+                        : 'Entry and Exit'
+                      : permit.type}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={6} sx={{ textAlign: 'right' }}>
@@ -202,8 +215,18 @@ const ViewPermitModal: React.FC<ViewPermitModalProps> = ({ open, onClose, permit
                         </Typography>
                       )}
                       {permit.responsibleId?.phone && (
-                        <Typography variant='body2' color='text.secondary'>
-                          {permit.responsibleId.phone}
+                        <Typography
+                          variant='body2'
+                          color='primary'
+                          sx={{
+                            direction: 'ltr', // Force LTR for phone numbers to ensure + is at the start
+                            unicodeBidi: 'plaintext', // Ensure proper text direction handling
+                            textAlign: 'left' // Align to the left for proper phone number display
+                          }}
+                        >
+                          {permit.responsibleId.phone && !permit.responsibleId.phone.startsWith('+')
+                            ? `+${permit.responsibleId.phone}`
+                            : permit.responsibleId.phone}
                         </Typography>
                       )}
                     </Box>

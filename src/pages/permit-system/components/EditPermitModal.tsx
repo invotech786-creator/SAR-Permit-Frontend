@@ -224,13 +224,16 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
       formData.append('status', status.toString())
 
       await permitService.updatePermitStatus(permitId, formData)
-      showSuccessMessage('Permit status updated successfully')
+      showSuccessMessage(t('Permit status updated successfully'))
 
       // Notify parent component to refresh the permit list
       onStatusUpdate()
+
+      // Close the edit modal immediately after status update
+      onClose()
     } catch (error) {
       console.error('Error updating permit status:', error)
-      showErrorMessage('Failed to update permit status')
+      showErrorMessage(t('Failed to update permit status'))
     }
   }
 
@@ -253,7 +256,7 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
 
       await permitService.declinePerson(permit._id, personId, declineReason.trim())
 
-      showSuccessMessage('Person declined successfully')
+      showSuccessMessage(t('Person declined successfully'))
       setDeclineDialogOpen(false)
       setSelectedPersonForDecline(null)
       setDeclineReason('')
@@ -267,7 +270,7 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
       setPeopleImages(newImages)
     } catch (error) {
       console.error('Error declining person:', error)
-      showErrorMessage('Failed to decline person')
+      showErrorMessage(t('Failed to decline person'))
     } finally {
       setDeclineLoading(false)
     }
@@ -388,13 +391,13 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
         !formData.startDate ||
         !formData.endDate
       ) {
-        showErrorMessage('Please fill in all required fields')
+        showErrorMessage(t('Please fill in all required fields'))
         return
       }
 
       // Validate date constraints
       if (formData.endDate <= formData.startDate) {
-        showErrorMessage('End date must be after start date')
+        showErrorMessage(t('End date must be after start date'))
         return
       }
 
@@ -418,12 +421,12 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
 
       await permitService.updatePermit(permit._id, permitData as any)
 
-      showSuccessMessage('Permit updated successfully')
+      showSuccessMessage(t('Permit updated successfully'))
       onSuccess()
       onClose()
     } catch (error) {
       console.error('Error updating permit:', error)
-      showErrorMessage('Failed to update permit')
+      showErrorMessage(t('Failed to update permit'))
     } finally {
       setLoading(false)
     }
@@ -498,11 +501,13 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
                         onChange={e => handleFormChange('companyId', e.target.value)}
                         label={currentLang === 'ar' ? 'الشركة' : 'Company'}
                       >
-                        {companies.map(company => (
-                          <MenuItem key={company._id} value={company._id}>
-                            {getLocalizedText(company.nameEn, company.nameAr)}
-                          </MenuItem>
-                        ))}
+                        {companies
+                          .filter(company => company.isActive)
+                          .map(company => (
+                            <MenuItem key={company._id} value={company._id}>
+                              {getLocalizedText(company.nameEn, company.nameAr)}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -543,7 +548,15 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
                       fullWidth
                       label={currentLang === 'ar' ? 'الهدف (عربي)' : 'Purpose (Arabic)'}
                       value={formData.purposeAr}
-                      onChange={e => handleFormChange('purposeAr', e.target.value)}
+                      onChange={e => {
+                        const value = e.target.value
+                        // Only allow Arabic text, numbers, and common punctuation
+                        const arabicRegex =
+                          /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\d\.,!?;:'"()\-]*$/
+                        if (arabicRegex.test(value) || value === '') {
+                          handleFormChange('purposeAr', value)
+                        }
+                      }}
                       required
                       error={!formData.purposeAr}
                     />
@@ -554,9 +567,19 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
                       fullWidth
                       label={currentLang === 'ar' ? 'الهدف (إنجليزي)' : 'Purpose (English)'}
                       value={formData.purposeEn}
-                      onChange={e => handleFormChange('purposeEn', e.target.value)}
+                      onChange={e => {
+                        const value = e.target.value
+                        // Only allow English text, numbers, and common punctuation
+                        const englishRegex = /^[a-zA-Z\s\d\.,!?;:'"()\-]*$/
+                        if (englishRegex.test(value) || value === '') {
+                          handleFormChange('purposeEn', value)
+                        }
+                      }}
                       required
                       error={!formData.purposeEn}
+                      helperText={
+                        currentLang === 'ar' ? 'يجب أن يكون النص باللغة الإنجليزية فقط' : 'Text must be in English only'
+                      }
                     />
                   </Grid>
 

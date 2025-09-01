@@ -123,7 +123,7 @@ const App = (props: ExtendedAppProps) => {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`${themeConfig.templateName} system`}</title>
+        <title>{`${themeConfig.templateName}`}</title>
         <meta name='description' content={`${themeConfig.templateName} system`} />
         <meta name='keywords' content='PMIS system' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />

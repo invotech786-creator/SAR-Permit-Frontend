@@ -364,7 +364,7 @@ const RoleCards = ({ roles }: RoleCardsProps) => {
                     onClick={() => hasPermission('role-management', 'create') && handleClickOpen()}
                     disabled={!hasPermission('role-management', 'create')}
                   >
-                    {t('Add New Role')} +
+                    + {t('Add New Role')}
                   </Button>
                   <Typography sx={{ color: 'text.secondary' }}>{t("Add role, if it doesn't exist.")}</Typography>
                 </Box>
@@ -448,13 +448,13 @@ const RoleCards = ({ roles }: RoleCardsProps) => {
                   onChange={e => setRoleDescription(e.target.value)}
                   multiline
                   rows={2}
-                  inputProps={{ maxLength: 500 }}
+                  inputProps={{ maxLength: 200 }}
                   error={Boolean(roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim()))}
                   helperText={
                     roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())
                       ? strictEnglishOnlyMessage
                       : roleDescription.length > 0
-                      ? `Limit: ${roleDescription.length}/500`
+                      ? `Limit: ${roleDescription.length}/200`
                       : ''
                   }
                 />
@@ -469,7 +469,7 @@ const RoleCards = ({ roles }: RoleCardsProps) => {
                   multiline
                   rows={2}
                   required
-                  inputProps={{ maxLength: 500 }}
+                  inputProps={{ maxLength: 200 }}
                   error={Boolean(!roleDescriptionAr.trim() || !strictArabicOnlyPattern.test(roleDescriptionAr.trim()))}
                   helperText={
                     !roleDescriptionAr.trim()
@@ -477,7 +477,7 @@ const RoleCards = ({ roles }: RoleCardsProps) => {
                       : !strictArabicOnlyPattern.test(roleDescriptionAr.trim())
                       ? strictArabicOnlyMessage
                       : roleDescriptionAr.length > 0
-                      ? `Limit: ${roleDescriptionAr.length}/500`
+                      ? `Limit: ${roleDescriptionAr.length}/200`
                       : ''
                   }
                 />

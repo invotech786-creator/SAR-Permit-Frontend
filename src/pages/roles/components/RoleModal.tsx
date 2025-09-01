@@ -33,14 +33,13 @@ import { IRole } from 'src/types/role'
 import Icon from 'src/@core/components/icon'
 
 // ** Utils
-import { 
-  strictArabicOnlyPattern, 
-  strictEnglishOnlyPattern, 
-  fieldRequiredMessage, 
-  strictArabicOnlyMessage, 
-  strictEnglishOnlyMessage 
+import {
+  strictArabicOnlyPattern,
+  strictEnglishOnlyPattern,
+  fieldRequiredMessage,
+  strictArabicOnlyMessage,
+  strictEnglishOnlyMessage
 } from 'src/utils'
-
 
 interface RoleModalProps {
   open: boolean
@@ -108,12 +107,12 @@ const RoleModal = ({ open, role, mode, onClose, onSave }: RoleModalProps) => {
     if (!roleName.trim() || roleName.trim().length < 2 || !roleDescriptionAr.trim()) {
       return // The store will handle the error message
     }
-    
+
     // Validate English fields - no Arabic characters allowed
     if (!strictEnglishOnlyPattern.test(roleName.trim())) return
     if (roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())) return
-    
-    // Validate Arabic fields - no English characters allowed  
+
+    // Validate Arabic fields - no English characters allowed
     if (roleNameAr.trim() && !strictArabicOnlyPattern.test(roleNameAr.trim())) return
     if (!strictArabicOnlyPattern.test(roleDescriptionAr.trim())) return
 
@@ -188,8 +187,10 @@ const RoleModal = ({ open, role, mode, onClose, onSave }: RoleModalProps) => {
                     disabled={mode === 'view'}
                     required
                     error={
-                      mode === 'edit' && 
-                      (!roleName.trim() || roleName.trim().length < 2 || !strictEnglishOnlyPattern.test(roleName.trim()))
+                      mode === 'edit' &&
+                      (!roleName.trim() ||
+                        roleName.trim().length < 2 ||
+                        !strictEnglishOnlyPattern.test(roleName.trim()))
                     }
                     helperText={
                       mode === 'edit' && !roleName.trim()
@@ -209,9 +210,7 @@ const RoleModal = ({ open, role, mode, onClose, onSave }: RoleModalProps) => {
                     value={roleNameAr}
                     onChange={e => setRoleNameAr(e.target.value)}
                     disabled={mode === 'view'}
-                    error={
-                      mode === 'edit' && roleNameAr.trim() && !strictArabicOnlyPattern.test(roleNameAr.trim())
-                    }
+                    error={mode === 'edit' && roleNameAr.trim() && !strictArabicOnlyPattern.test(roleNameAr.trim())}
                     helperText={
                       mode === 'edit' && roleNameAr.trim() && !strictArabicOnlyPattern.test(roleNameAr.trim())
                         ? strictArabicOnlyMessage
@@ -228,12 +227,19 @@ const RoleModal = ({ open, role, mode, onClose, onSave }: RoleModalProps) => {
                     multiline
                     rows={2}
                     disabled={mode === 'view'}
+                    inputProps={{ maxLength: 200 }}
                     error={
-                      mode === 'edit' && roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())
+                      mode === 'edit' &&
+                      roleDescription.trim() &&
+                      !strictEnglishOnlyPattern.test(roleDescription.trim())
                     }
                     helperText={
-                      mode === 'edit' && roleDescription.trim() && !strictEnglishOnlyPattern.test(roleDescription.trim())
+                      mode === 'edit' &&
+                      roleDescription.trim() &&
+                      !strictEnglishOnlyPattern.test(roleDescription.trim())
                         ? strictEnglishOnlyMessage
+                        : roleDescription.length > 0
+                        ? `Limit: ${roleDescription.length}/200`
                         : ''
                     }
                   />
@@ -248,15 +254,20 @@ const RoleModal = ({ open, role, mode, onClose, onSave }: RoleModalProps) => {
                     rows={2}
                     disabled={mode === 'view'}
                     required={mode === 'edit'}
+                    inputProps={{ maxLength: 200 }}
                     error={
-                      mode === 'edit' && 
+                      mode === 'edit' &&
                       (!roleDescriptionAr.trim() || !strictArabicOnlyPattern.test(roleDescriptionAr.trim()))
                     }
                     helperText={
                       mode === 'edit' && !roleDescriptionAr.trim()
                         ? t('Field is required')
-                        : mode === 'edit' && roleDescriptionAr.trim() && !strictArabicOnlyPattern.test(roleDescriptionAr.trim())
+                        : mode === 'edit' &&
+                          roleDescriptionAr.trim() &&
+                          !strictArabicOnlyPattern.test(roleDescriptionAr.trim())
                         ? strictArabicOnlyMessage
+                        : roleDescriptionAr.length > 0
+                        ? `Limit: ${roleDescriptionAr.length}/200`
                         : ''
                     }
                   />
