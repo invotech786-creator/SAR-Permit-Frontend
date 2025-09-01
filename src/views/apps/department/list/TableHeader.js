@@ -82,8 +82,17 @@ const TableHeader = props => {
             variant='contained'
             sx={{ '& svg': { mr: isRTL ? 0 : 2, ml: isRTL ? 2 : 0 }, ml: isRTL ? 0 : 2, mr: isRTL ? 2 : 0 }}
           >
-            <Icon fontSize='1.125rem' icon='tabler:plus' />
-            {t('Add Department')}
+            {isRTL ? (
+              <>
+                {t('Add Department')}
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+              </>
+            ) : (
+              <>
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+                {t('Add Department')}
+              </>
+            )}
           </Button>
         )}
       </Box>

@@ -68,9 +68,22 @@ const TableHeader = props => {
         )}
 
         {canCreate && (
-          <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: isRTL ? 0 : 2, ml: isRTL ? 2 : 0 }, ml: isRTL ? 0 : 2, mr: isRTL ? 2 : 0 }}>
-            <Icon fontSize='1.125rem' icon='tabler:plus' />
-            {t('Add')} {t('Job Title')}
+          <Button
+            onClick={toggle}
+            variant='contained'
+            sx={{ '& svg': { mr: isRTL ? 0 : 2, ml: isRTL ? 2 : 0 }, ml: isRTL ? 0 : 2, mr: isRTL ? 2 : 0 }}
+          >
+            {isRTL ? (
+              <>
+                {t('Add')} {t('Job Title')}
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+              </>
+            ) : (
+              <>
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+                {t('Add')} {t('Job Title')}
+              </>
+            )}
           </Button>
         )}
       </Box>

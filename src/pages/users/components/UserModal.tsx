@@ -553,11 +553,13 @@ const UserModal: FC<Props> = ({ open, toggle, userId, mode, initialUserData }) =
                     disabled={mode === 'View'}
                     label={t('Role')}
                   >
-                    {(roles || []).map(role => (
-                      <MenuItem key={role._id} value={role._id}>
-                        {language === 'ar' ? role.nameAr : role.nameEn}
-                      </MenuItem>
-                    ))}
+                    {(roles || [])
+                      .filter(role => role.isActive)
+                      .map(role => (
+                        <MenuItem key={role._id} value={role._id}>
+                          {language === 'ar' ? role.nameAr : role.nameEn}
+                        </MenuItem>
+                      ))}
                   </Select>
                   <ErrorMessage error={errors.roleId} touched={touched.roleId} />
                 </FormControl>
@@ -574,11 +576,13 @@ const UserModal: FC<Props> = ({ open, toggle, userId, mode, initialUserData }) =
                     disabled={mode === 'View'}
                     label={t('Company')}
                   >
-                    {(companies || []).map(company => (
-                      <MenuItem key={company._id} value={company._id}>
-                        {language === 'ar' ? company.nameAr : company.nameEn}
-                      </MenuItem>
-                    ))}
+                    {(companies || [])
+                      .filter(company => company.isActive)
+                      .map(company => (
+                        <MenuItem key={company._id} value={company._id}>
+                          {language === 'ar' ? company.nameAr : company.nameEn}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -594,11 +598,13 @@ const UserModal: FC<Props> = ({ open, toggle, userId, mode, initialUserData }) =
                     disabled={mode === 'View'}
                     label={t('Job Title')}
                   >
-                    {(jobTitles || []).map(jobTitle => (
-                      <MenuItem key={jobTitle._id} value={jobTitle._id}>
-                        {language === 'ar' ? jobTitle.nameAr : jobTitle.nameEn}
-                      </MenuItem>
-                    ))}
+                    {(jobTitles || [])
+                      .filter(jobTitle => jobTitle.isActive)
+                      .map(jobTitle => (
+                        <MenuItem key={jobTitle._id} value={jobTitle._id}>
+                          {language === 'ar' ? jobTitle.nameAr : jobTitle.nameEn}
+                        </MenuItem>
+                      ))}
                   </Select>
                   {mode !== 'View' && (
                     <Button
@@ -624,11 +630,13 @@ const UserModal: FC<Props> = ({ open, toggle, userId, mode, initialUserData }) =
                     disabled={mode === 'View'}
                     label={t('Department')}
                   >
-                    {(departments || []).map(department => (
-                      <MenuItem key={department._id} value={department._id}>
-                        {language === 'ar' ? department.nameAr : department.nameEn}
-                      </MenuItem>
-                    ))}
+                    {(departments || [])
+                      .filter(department => department.isActive)
+                      .map(department => (
+                        <MenuItem key={department._id} value={department._id}>
+                          {language === 'ar' ? department.nameAr : department.nameEn}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </Grid>

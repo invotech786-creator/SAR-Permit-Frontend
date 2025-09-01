@@ -16,7 +16,8 @@ const TableHeader = props => {
   const { t, i18n } = useTranslation()
   const isRTL = i18n.dir() === 'rtl'
   // ** Props
-  const { handleFilter, toggle, value, selectedRows, onBulkAction, onShowAllColumns, canCreate, canDelete, canUpdate } = props
+  const { handleFilter, toggle, value, selectedRows, onBulkAction, onShowAllColumns, canCreate, canDelete, canUpdate } =
+    props
 
   // ** State for controlled select
   const [bulkActionValue, setBulkActionValue] = useState('')
@@ -73,9 +74,9 @@ const TableHeader = props => {
                 <IconButton
                   size='small'
                   onClick={() => handleFilter('')}
-                  sx={{ 
+                  sx={{
                     color: 'text.secondary',
-                    '&:hover': { 
+                    '&:hover': {
                       color: 'text.primary',
                       backgroundColor: 'action.hover'
                     }
@@ -101,9 +102,22 @@ const TableHeader = props => {
         )}
 
         {canCreate && (
-          <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: isRTL ? 0 : 2, ml: isRTL ? 2 : 0 }, ml: isRTL ? 0 : 2, mr: isRTL ? 2 : 0 }}>
-            <Icon fontSize='1.125rem' icon='tabler:plus' />
-            {t('Add New User')}
+          <Button
+            onClick={toggle}
+            variant='contained'
+            sx={{ '& svg': { mr: isRTL ? 0 : 2, ml: isRTL ? 2 : 0 }, ml: isRTL ? 0 : 2, mr: isRTL ? 2 : 0 }}
+          >
+            {isRTL ? (
+              <>
+                {t('Add New User')}
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+              </>
+            ) : (
+              <>
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+                {t('Add New User')}
+              </>
+            )}
           </Button>
         )}
       </Box>

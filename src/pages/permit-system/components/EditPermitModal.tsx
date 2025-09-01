@@ -141,7 +141,9 @@ const EditPermitModal: React.FC<EditPermitModalProps> = ({ open, onClose, onSucc
   const loadDepartments = async () => {
     try {
       const deps = await permitService.getDepartments()
-      setDepartments(deps)
+      // Filter only active departments
+      const activeDepartments = deps.filter(dept => dept.isActive)
+      setDepartments(activeDepartments)
     } catch (error) {
       console.error('Error loading departments:', error)
     }

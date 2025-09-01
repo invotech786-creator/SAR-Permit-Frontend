@@ -988,7 +988,38 @@ const Users = () => {
                 labelRowsPerPage: t('Rows per page:'),
                 labelDisplayedRows: ({ from, to, count }) =>
                   `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
-              }
+              },
+              // Column actions localization
+              columnMenuLabel: t('Menu'),
+              columnMenuShowColumns: t('Show columns'),
+              columnMenuFilter: t('Filter'),
+              columnMenuHideColumn: t('Hide'),
+              columnMenuUnsort: t('Unsort'),
+              columnMenuSortAsc: t('Sort by ASC'),
+              columnMenuSortDesc: t('Sort by DESC'),
+              // Filter panel localization
+              filterPanelAddFilter: t('Add filter'),
+              filterPanelDeleteIconLabel: t('Delete filter'),
+              filterPanelOperators: t('Operator'),
+              filterPanelOperatorAnd: t('And'),
+              filterPanelOperatorOr: t('Or'),
+              filterPanelColumns: t('Columns'),
+              filterPanelInputLabel: t('Value'),
+              filterPanelInputPlaceholder: t('Filter value'),
+              // Filter operator labels
+              filterOperatorContains: t('contains'),
+              filterOperatorEquals: t('equals'),
+              filterOperatorStartsWith: t('starts with'),
+              filterOperatorEndsWith: t('ends with'),
+              filterOperatorIsEmpty: t('is empty'),
+              filterOperatorIsNotEmpty: t('is not empty'),
+              filterOperatorIsAnyOf: t('is any of'),
+              // Column visibility
+              columnsPanelTextFieldLabel: t('Find column'),
+              columnsPanelTextFieldPlaceholder: t('Column title...'),
+              columnsPanelDragIconLabel: t('Reorder column'),
+              columnsPanelShowAllButton: t('Show all'),
+              columnsPanelHideAllButton: t('Hide all')
             }}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
             onPageChange={newPage => {
