@@ -443,8 +443,8 @@ const Users = () => {
   // ** Column definitions
   const columns = [
     {
-      flex: 1,
-      minWidth: 250,
+      flex: 1.2,
+      minWidth: 200, // Reduced from 250
       field: 'nameEn',
       headerName: t('Name'),
       sortable: true,
@@ -497,7 +497,7 @@ const Users = () => {
     },
     {
       flex: 1,
-      minWidth: 200,
+      minWidth: 180, // Reduced from 200
       field: 'email',
       headerName: t('Email'),
       sortable: true,
@@ -512,8 +512,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 130, // Reduced from 150
       field: 'phone',
       headerName: t('Phone'),
       sortable: true,
@@ -551,9 +551,9 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
+      flex: 0.7,
       field: 'roleId',
-      minWidth: 150,
+      minWidth: 120, // Reduced from 150
       headerName: t('Role'),
       sortable: true,
       valueGetter: ({ row }: any) => {
@@ -611,8 +611,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 120, // Reduced from 150
       field: 'company',
       headerName: t('Company'),
       sortable: true,
@@ -669,8 +669,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 120, // Reduced from 150
       field: 'jobTitle',
       headerName: t('Job Title'),
       sortable: true,
@@ -727,8 +727,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 120, // Reduced from 150
       field: 'departmentId',
       headerName: t('Department'),
       sortable: true,
@@ -781,8 +781,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 120,
+      flex: 0.6,
+      minWidth: 100, // Reduced from 120
       field: 'isActive',
       headerName: t('Status'),
       sortable: true,
@@ -806,8 +806,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 120, // Reduced from 150
       field: 'createdAt',
       headerName: t('Created At'),
       sortable: true,
@@ -820,8 +820,8 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 150,
+      flex: 0.8,
+      minWidth: 120, // Reduced from 150
       field: 'createdBy',
       headerName: t('Created By'),
       sortable: true,
@@ -856,11 +856,16 @@ const Users = () => {
       }
     },
     {
-      flex: 1,
-      minWidth: 120,
+      flex: 0,
+      width: 140, // Fixed width
+      minWidth: 140,
+      maxWidth: 140,
       sortable: false,
       field: 'actions',
       headerName: t('Actions'),
+      hideable: false, // Prevent hiding
+      disableColumnMenu: true,
+      disableReorder: true,
       renderCell: ({ row }: any) => (
         <RowOptions
           id={row._id}
@@ -949,7 +954,12 @@ const Users = () => {
             </Grid>
           </CardContent>
           <Divider sx={{ m: '0 !important' }} />
+        </Card>
+      </Grid>
 
+      {/* Data Grid Section */}
+      <Grid item xs={12}>
+        <Card>
           {/* Table Header with Search and Add Button */}
           <TableHeader
             value={value}
@@ -967,90 +977,154 @@ const Users = () => {
             canDelete={canDeleteUser}
           />
 
-          {/* Data Grid */}
-          <DataGrid
-            autoHeight
-            rowHeight={62}
-            rows={safeUsers}
-            columns={columns}
-            pageSize={pageSize}
-            page={pagination?.current ? pagination.current - 1 : 0}
-            rowCount={pagination?.total || 0}
-            paginationMode='server'
-            checkboxSelection
-            disableSelectionOnClick
-            onSelectionModelChange={newSelection => setSelectedRows(newSelection)}
-            selectionModel={selectedRows}
-            rowsPerPageOptions={[10, 25, 50]}
-            localeText={{
-              noRowsLabel: t('No Records Found'),
-              MuiTablePagination: {
-                labelRowsPerPage: t('Rows per page:'),
-                labelDisplayedRows: ({ from, to, count }) =>
-                  `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
-              },
-              // Column actions localization
-              columnMenuLabel: t('Menu'),
-              columnMenuShowColumns: t('Show columns'),
-              columnMenuFilter: t('Filter'),
-              columnMenuHideColumn: t('Hide'),
-              columnMenuUnsort: t('Unsort'),
-              columnMenuSortAsc: t('Sort by ASC'),
-              columnMenuSortDesc: t('Sort by DESC'),
-              // Filter panel localization
-              filterPanelAddFilter: t('Add filter'),
-              filterPanelDeleteIconLabel: t('Delete filter'),
-              filterPanelOperators: t('Operator'),
-              filterPanelOperatorAnd: t('And'),
-              filterPanelOperatorOr: t('Or'),
-              filterPanelColumns: t('Columns'),
-              filterPanelInputLabel: t('Value'),
-              filterPanelInputPlaceholder: t('Filter value'),
-              // Filter operator labels
-              filterOperatorContains: t('contains'),
-              filterOperatorEquals: t('equals'),
-              filterOperatorStartsWith: t('starts with'),
-              filterOperatorEndsWith: t('ends with'),
-              filterOperatorIsEmpty: t('is empty'),
-              filterOperatorIsNotEmpty: t('is not empty'),
-              filterOperatorIsAnyOf: t('is any of'),
-              // Column visibility
-              columnsPanelTextFieldLabel: t('Find column'),
-              columnsPanelTextFieldPlaceholder: t('Column title...'),
-              columnsPanelDragIconLabel: t('Reorder column'),
-              columnsPanelShowAllButton: t('Show all'),
-              columnsPanelHideAllButton: t('Hide all')
-            }}
-            onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-            onPageChange={newPage => {
-              if (pagination) {
-                getUsers({
-                  page: newPage + 1,
-                  limit: pageSize,
-                  search: debouncedValue,
-                  ...(filters.role && { roleId: filters.role }),
-                  ...(filters.status &&
-                    filters.status !== 'all' && { status: filters.status === 'true' ? 'active' : 'inactive' })
-                })
-              }
-            }}
-            getRowId={row => row._id}
-            loading={loading}
-            columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={setColumnVisibilityModel}
-            disableColumnMenu={false}
+          {/* Add this wrapper Box */}
+          <Box
             sx={{
-              border: 0,
-              '& .MuiDataGrid-cell': {
-                whiteSpace: 'normal',
-                wordWrap: 'break-word'
+              width: '100%',
+              '& .MuiDataGrid-main': {
+                minWidth: '1100px', // Force minimum width
               },
-              '& .MuiDataGrid-columnHeader': {
-                whiteSpace: 'normal',
-                wordWrap: 'break-word'
-              }
+              '& .MuiDataGrid-virtualScroller': {
+                overflowX: 'auto !important',
+              },
             }}
-          />
+          >
+            <DataGrid
+              autoHeight
+              rowHeight={62}
+              rows={safeUsers}
+              columns={columns}
+              pageSize={pageSize}
+              page={pagination?.current ? pagination.current - 1 : 0}
+              rowCount={pagination?.total || 0}
+              paginationMode='server'
+              checkboxSelection
+              disableSelectionOnClick
+              onSelectionModelChange={newSelection => setSelectedRows(newSelection)}
+              selectionModel={selectedRows}
+              rowsPerPageOptions={[10, 25, 50]}
+              columnBuffer={8} // Increase buffer
+              columnThreshold={3}
+              localeText={{
+                noRowsLabel: t('No Records Found'),
+                MuiTablePagination: {
+                  labelRowsPerPage: t('Rows per page:'),
+                  labelDisplayedRows: ({ from, to, count }) =>
+                    `${from}-${to} ${t('of')} ${count !== -1 ? count : `more than ${to}`}`
+                },
+                // Column actions localization
+                columnMenuLabel: t('Menu'),
+                columnMenuShowColumns: t('Show columns'),
+                columnMenuFilter: t('Filter'),
+                columnMenuHideColumn: t('Hide'),
+                columnMenuUnsort: t('Unsort'),
+                columnMenuSortAsc: t('Sort by ASC'),
+                columnMenuSortDesc: t('Sort by DESC'),
+                // Filter panel localization
+                filterPanelAddFilter: t('Add filter'),
+                filterPanelDeleteIconLabel: t('Delete filter'),
+                filterPanelOperators: t('Operator'),
+                filterPanelOperatorAnd: t('And'),
+                filterPanelOperatorOr: t('Or'),
+                filterPanelColumns: t('Columns'),
+                filterPanelInputLabel: t('Value'),
+                filterPanelInputPlaceholder: t('Filter value'),
+                // Filter operator labels
+                filterOperatorContains: t('contains'),
+                filterOperatorEquals: t('equals'),
+                filterOperatorStartsWith: t('starts with'),
+                filterOperatorEndsWith: t('ends with'),
+                filterOperatorIsEmpty: t('is empty'),
+                filterOperatorIsNotEmpty: t('is not empty'),
+                filterOperatorIsAnyOf: t('is any of'),
+                // Column visibility
+                columnsPanelTextFieldLabel: t('Find column'),
+                columnsPanelTextFieldPlaceholder: t('Column title...'),
+                columnsPanelDragIconLabel: t('Reorder column'),
+                columnsPanelShowAllButton: t('Show all'),
+                columnsPanelHideAllButton: t('Hide all')
+              }}
+              onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+              onPageChange={newPage => {
+                if (pagination) {
+                  getUsers({
+                    page: newPage + 1,
+                    limit: pageSize,
+                    search: debouncedValue,
+                    ...(filters.role && { roleId: filters.role }),
+                    ...(filters.status &&
+                      filters.status !== 'all' && { status: filters.status === 'true' ? 'active' : 'inactive' })
+                  })
+                }
+              }}
+              getRowId={row => row._id}
+              loading={loading}
+              columnVisibilityModel={columnVisibilityModel}
+              onColumnVisibilityModelChange={setColumnVisibilityModel}
+              disableColumnMenu={false}
+              sx={{
+                border: 0,
+                minWidth: '100%',
+                '& .MuiDataGrid-root': {
+                  minWidth: '1100px',
+                },
+                '& .MuiDataGrid-main': {
+                  overflow: 'visible',
+                },
+                '& .MuiDataGrid-virtualScroller': {
+                  overflow: 'auto !important',
+                },
+                '& .MuiDataGrid-cell': {
+                  whiteSpace: 'normal',
+                  wordWrap: 'break-word',
+                  minWidth: 0,
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  whiteSpace: 'normal',
+                  wordWrap: 'break-word',
+                  minWidth: 0,
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  minWidth: 'max-content',
+                  overflow: 'visible !important',
+                },
+                '& .MuiDataGrid-columnHeadersInner': {
+                  overflow: 'visible !important',
+                },
+                '& .MuiDataGrid-virtualScrollerContent': {
+                  minWidth: '1100px !important', // Force content width
+                },
+                // RTL specific - Fix header scrolling
+                ...(isRTL && {
+                  direction: 'rtl',
+                  '& .MuiDataGrid-main': {
+                    direction: 'rtl',
+                    overflow: 'visible',
+                  },
+                  '& .MuiDataGrid-virtualScroller': {
+                    direction: 'rtl',
+                    overflow: 'auto !important',
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    direction: 'rtl',
+                    overflow: 'visible !important',
+                    transform: 'none !important',
+                  },
+                  '& .MuiDataGrid-columnHeadersInner': {
+                    direction: 'rtl',
+                    overflow: 'visible !important',
+                    transform: 'none !important',
+                  },
+                  '& .MuiDataGrid-virtualScrollerContent': {
+                    direction: 'rtl',
+                  },
+                  '& .MuiDataGrid-virtualScrollerRenderZone': {
+                    direction: 'rtl',
+                  },
+                })
+              }}
+            />
+          </Box>
         </Card>
       </Grid>
 

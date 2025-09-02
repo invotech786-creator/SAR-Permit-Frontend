@@ -350,3 +350,106 @@ input[type='time']::-ms-clear {
   color: rgba(47, 43, 61, 0.9) !important;
   -webkit-text-fill-color: rgba(47, 43, 61, 0.9) !important;
 }
+
+/* Force DataGrid to maintain minimum width */
+.MuiDataGrid-root {
+  min-width: 100%;
+}
+
+.MuiDataGrid-virtualScrollerContent {
+  min-width: 1100px !important;
+}
+
+/* Prevent column hiding on smaller viewports */
+.MuiDataGrid-columnHeaders {
+  min-width: max-content !important;
+}
+
+/* RTL specific fixes */
+[dir="rtl"] .MuiDataGrid-virtualScrollerContent {
+  min-width: 1100px !important;
+  direction: rtl;
+}
+
+/* Ensure actions column is always visible */
+.MuiDataGrid-cell[data-field="actions"],
+.MuiDataGrid-columnHeader[data-field="actions"] {
+  position: sticky !important;
+  right: 0 !important;
+  background-color: inherit !important;
+  z-index: 1 !important;
+}
+
+[dir="rtl"] .MuiDataGrid-cell[data-field="actions"],
+[dir="rtl"] .MuiDataGrid-columnHeader[data-field="actions"] {
+  right: auto !important;
+  left: 0 !important;
+}
+
+/* Add shadow to sticky column */
+.MuiDataGrid-cell[data-field="actions"]::before,
+.MuiDataGrid-columnHeader[data-field="actions"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+  background: linear-gradient(to right, transparent, rgba(0,0,0,0.05));
+  pointer-events: none;
+}
+
+[dir="rtl"] .MuiDataGrid-cell[data-field="actions"]::before,
+[dir="rtl"] .MuiDataGrid-columnHeader[data-field="actions"]::before {
+  left: auto;
+  right: -10px;
+  background: linear-gradient(to left, transparent, rgba(0,0,0,0.05));
+}
+
+/* Override MUI's auto-hide behavior */
+@media (max-width: 1536px) {
+  .MuiDataGrid-virtualScrollerContent {
+    min-width: 1100px !important;
+  }
+
+  .MuiDataGrid-columnHeaders {
+    overflow: visible !important;
+  }
+}
+
+/* Fix RTL DataGrid header scrolling */
+[dir="rtl"] .MuiDataGrid-root {
+  direction: rtl !important;
+}
+
+[dir="rtl"] .MuiDataGrid-main {
+  direction: rtl !important;
+  overflow: visible !important;
+}
+
+[dir="rtl"] .MuiDataGrid-virtualScroller {
+  direction: rtl !important;
+  overflow: auto !important;
+}
+
+[dir="rtl"] .MuiDataGrid-columnHeaders,
+[dir="rtl"] .MuiDataGrid-columnHeadersInner {
+  direction: rtl !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+[dir="rtl"] .MuiDataGrid-virtualScrollerContent,
+[dir="rtl"] .MuiDataGrid-virtualScrollerRenderZone {
+  direction: rtl !important;
+}
+
+/* Ensure dummy columns work properly in RTL */
+[dir="rtl"] .MuiDataGrid-columnHeader[data-field="dummy1"],
+[dir="rtl"] .MuiDataGrid-columnHeader[data-field="dummy2"],
+[dir="rtl"] .MuiDataGrid-cell[data-field="dummy1"],
+[dir="rtl"] .MuiDataGrid-cell[data-field="dummy2"] {
+  min-width: 50px !important;
+  max-width: 50px !important;
+  width: 50px !important;
+}
